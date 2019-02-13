@@ -9,10 +9,10 @@ import org.snomed.snowstorm.core.data.domain.Description;
 import org.snomed.snowstorm.core.data.services.ConceptService;
 import org.snomed.snowstorm.core.data.services.DescriptionService;
 import org.snomed.snowstorm.core.data.services.pojo.PageWithBucketAggregations;
-import org.snomed.snowstorm.core.data.services.pojo.ResultMapPage;
 import org.snomed.snowstorm.rest.pojo.BrowserDescriptionSearchResult;
 import org.snomed.snowstorm.rest.pojo.ItemsPage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
@@ -42,9 +42,9 @@ public class DescriptionController {
 			@RequestParam(defaultValue = "0") int offset,
 			@RequestParam(defaultValue = "50") int limit,
 			@RequestHeader(value = "Accept-Language", defaultValue = ControllerHelper.DEFAULT_ACCEPT_LANG_HEADER) String acceptLanguageHeader) {
-
+		//TODO Add support for searchAfter
 		branch = BranchPathUriUtil.decodePath(branch);
-		PageRequest pageRequest = ControllerHelper.getPageRequest(offset, limit);
+		AbstractPageRequest pageRequest = ControllerHelper.getPageRequest(offset, limit, null);
 
 		List<String> languageCodes = ControllerHelper.getLanguageCodes(acceptLanguageHeader);
 
@@ -88,9 +88,9 @@ public class DescriptionController {
 			@RequestParam(required = false) @ApiParam("The concept id to match") String concept,
 			@RequestParam(defaultValue = "0") int offset, @RequestParam(defaultValue = "50") int limit,
 			@RequestHeader("Accept-Language") String acceptLanguage) {
-
+		//TODO Add support for searchAfter
 		branch = BranchPathUriUtil.decodePath(branch);
-		return new ItemsPage<>(descriptionService.findDescriptions(branch, null, concept, ControllerHelper.getPageRequest(offset, limit)));
+		return new ItemsPage<>(descriptionService.findDescriptions(branch, null, concept, ControllerHelper.getPageRequest(offset, limit, null)));
 	}
 
 	@RequestMapping(value = "{branch}/descriptions/{descriptionId}", method = RequestMethod.GET)

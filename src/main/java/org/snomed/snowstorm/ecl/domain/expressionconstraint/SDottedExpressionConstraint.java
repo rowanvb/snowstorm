@@ -6,6 +6,7 @@ import org.snomed.langauges.ecl.domain.expressionconstraint.SubExpressionConstra
 import org.snomed.snowstorm.core.data.services.QueryService;
 import org.snomed.snowstorm.core.util.PageCollectionUtil;
 import org.snomed.snowstorm.ecl.domain.RefinementBuilder;
+import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +23,7 @@ public class SDottedExpressionConstraint extends DottedExpressionConstraint impl
 	}
 
 	@Override
-	public Optional<Page<Long>> select(String path, BranchCriteria branchCriteria, boolean stated, Collection<Long> conceptIdFilter, PageRequest pageRequest, QueryService queryService) {
+	public Optional<Page<Long>> select(String path, BranchCriteria branchCriteria, boolean stated, Collection<Long> conceptIdFilter, AbstractPageRequest pageRequest, QueryService queryService) {
 		Optional<Page<Long>> conceptIds = SExpressionConstraintHelper.select(this, path, branchCriteria, stated, conceptIdFilter, null, queryService);
 
 		if (!conceptIds.isPresent()) {

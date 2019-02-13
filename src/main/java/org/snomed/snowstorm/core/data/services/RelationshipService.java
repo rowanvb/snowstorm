@@ -10,6 +10,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.snomed.snowstorm.core.data.domain.Concepts;
 import org.snomed.snowstorm.core.data.domain.Relationship;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -55,7 +56,7 @@ public class RelationshipService extends ComponentService {
 			String destinationId,
 			Relationship.CharacteristicType characteristicType,
 			Integer group,
-			PageRequest page) {
+			AbstractPageRequest page) {
 
 		BranchCriteria branchCriteria = versionControlHelper.getBranchCriteria(branchPath);
 

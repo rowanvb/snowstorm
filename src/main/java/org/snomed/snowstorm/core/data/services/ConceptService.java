@@ -26,6 +26,7 @@ import org.snomed.snowstorm.core.data.services.pojo.ResultMapPage;
 import org.snomed.snowstorm.core.data.services.pojo.SAxiomRepresentation;
 import org.snomed.snowstorm.core.util.TimerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -165,7 +166,7 @@ public class ConceptService extends ComponentService {
 		return findConceptMinis(branchCriteria, conceptIds, languageCodes);
 	}
 
-	public ResultMapPage<String, ConceptMini> findConceptMinis(BranchCriteria branchCriteria, List<String> languageCodes, PageRequest pageRequest) {
+	public ResultMapPage<String, ConceptMini> findConceptMinis(BranchCriteria branchCriteria, List<String> languageCodes, AbstractPageRequest pageRequest) {
 		return findConceptMinis(branchCriteria, null, languageCodes, pageRequest);
 	}
 
@@ -176,7 +177,7 @@ public class ConceptService extends ComponentService {
 		return findConceptMinis(branchCriteria, conceptIds, languageCodes, PageRequest.of(0, conceptIds.size()));
 	}
 
-	private ResultMapPage<String, ConceptMini> findConceptMinis(BranchCriteria branchCriteria, Collection<?> conceptIds, List<String> languageCodes, PageRequest pageRequest) {
+	private ResultMapPage<String, ConceptMini> findConceptMinis(BranchCriteria branchCriteria, Collection<?> conceptIds, List<String> languageCodes, AbstractPageRequest pageRequest) {
 		if (conceptIds != null && conceptIds.isEmpty()) {
 			return new ResultMapPage<>(new HashMap<>(), 0);
 		}
@@ -202,7 +203,7 @@ public class ConceptService extends ComponentService {
 			Collection<?> conceptIdsToFind,
 			List<String> languageCodes,
 			BranchCriteria branchCriteria,
-			PageRequest pageRequest,
+			AbstractPageRequest pageRequest,
 			boolean includeRelationships,
 			boolean includeDescriptionInactivationInfo) {
 

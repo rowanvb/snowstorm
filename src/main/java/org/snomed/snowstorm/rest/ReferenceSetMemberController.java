@@ -44,7 +44,7 @@ public class ReferenceSetMemberController {
 			@RequestParam(defaultValue = "0") int offset,
 			@RequestParam(defaultValue = "50") int limit,
 			@RequestHeader(value = "Accept-Language", defaultValue = ControllerHelper.DEFAULT_ACCEPT_LANG_HEADER) String acceptLanguageHeader) {
-
+		//TODO Add support for searchAfter
 		Page<ReferenceSetMember> members = memberService.findMembers(
 				BranchPathUriUtil.decodePath(branch),
 				active,
@@ -52,7 +52,7 @@ public class ReferenceSetMemberController {
 				referencedComponentId,
 				targetComponent,
 				mapTarget,
-				ControllerHelper.getPageRequest(offset, limit)
+				ControllerHelper.getPageRequest(offset, limit, null)
 		);
 		joinReferencedComponents(members.getContent(), ControllerHelper.getLanguageCodes(acceptLanguageHeader), branch);
 		return new ItemsPage<>(members);

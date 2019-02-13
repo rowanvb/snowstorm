@@ -12,10 +12,7 @@ public class ConceptSearchRequest {
 	private Set<String> conceptIds;
 	private int offset = 0;
 	private int limit = 50;
-//		  "moduleFilter": "",
-//		  "escgFilter": "",
-//		  "expand": "",
-
+	private String searchAfter;
 
 	public ConceptSearchRequest() {
 	}
@@ -82,5 +79,13 @@ public class ConceptSearchRequest {
 
 	public void setLimit(int limit) {
 		this.limit = limit;
+	}
+
+	public String getSearchAfter() {
+		return searchAfter;
+	}
+
+	public void setSearchAfter(String searchAfter) {
+		this.searchAfter = searchAfter;
 	}
 }

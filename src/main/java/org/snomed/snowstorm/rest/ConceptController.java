@@ -63,8 +63,9 @@ public class ConceptController {
 			@RequestParam(required = false) String ecl,
 			@RequestParam(required = false) String statedEcl,
 			@RequestParam(required = false) Set<String> conceptIds,
-			@RequestParam(required = false, defaultValue = "0") int offset,
+			@RequestParam(required = false) Integer offset,
 			@RequestParam(required = false, defaultValue = "50") int limit,
+			@RequestParam(required = false) String searchAfter,
 			@RequestHeader(value = "Accept-Language", defaultValue = ControllerHelper.DEFAULT_ACCEPT_LANG_HEADER) String acceptLanguageHeader) {
 
 		boolean stated = true;
@@ -84,7 +85,7 @@ public class ConceptController {
 
 		validatePageSize(limit);
 
-		return new ItemsPage<>(queryService.search(queryBuilder, BranchPathUriUtil.decodePath(branch), ControllerHelper.getPageRequest(offset, limit)));
+		return new ItemsPage<>(queryService.search(queryBuilder, BranchPathUriUtil.decodePath(branch), ControllerHelper.getPageRequest(offset, limit, searchAfter)));
 	}
 
 	@RequestMapping(value = "/{branch}/concepts/{conceptId}", method = RequestMethod.GET, produces = {"application/json", "text/csv"})
@@ -115,6 +116,7 @@ public class ConceptController {
 				searchRequest.getConceptIds(),
 				searchRequest.getOffset(),
 				searchRequest.getLimit(),
+				searchRequest.getSearchAfter(),
 				acceptLanguageHeader);
 	}
 
@@ -173,9 +175,10 @@ public class ConceptController {
 			@RequestParam(required = false, defaultValue = "false") boolean stated,
 			@RequestParam(required = false, defaultValue = "0") int offset,
 			@RequestParam(required = false, defaultValue = "50") int limit,
+			@RequestParam(required = false) String searchAfter,
 			@RequestHeader(value = "Accept-Language", defaultValue = ControllerHelper.DEFAULT_ACCEPT_LANG_HEADER) String acceptLanguageHeader) {
 
-		return findConcepts(branch, stated, null, null, null, "<" + conceptId, null, offset, limit, acceptLanguageHeader);
+		return findConcepts(branch, stated, null, null, null, "<" + conceptId, null, offset, limit, searchAfter, acceptLanguageHeader);
 	}
 
 	@ResponseBody

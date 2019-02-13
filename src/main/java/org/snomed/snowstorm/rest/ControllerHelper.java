@@ -4,7 +4,9 @@ import org.elasticsearch.common.Strings;
 import org.snomed.snowstorm.core.data.domain.ConceptMini;
 import org.snomed.snowstorm.core.data.services.NotFoundException;
 import org.snomed.snowstorm.rest.pojo.ConceptMiniNestedFsn;
+import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.SearchAfterPageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,14 +54,23 @@ public class ControllerHelper {
 		return component;
 	}
 
-	public static PageRequest getPageRequest(@RequestParam(required = false, defaultValue = "0") int offset, @RequestParam(required = false, defaultValue = "50") int limit) {
-		if (offset % limit != 0) {
+	public static AbstractPageRequest getPageRequest(@RequestParam(required = false) Integer offset, @RequestParam(required = false, defaultValue = "50") int limit, @RequestParam(required = false) String searchAfter) {
+		if (offset!= null && offset % limit != 0) {
 			throw new IllegalArgumentException("Offset must be a multiplication of the limit param in order to map to Spring pages.");
 		}
-
-		int page = ((offset + limit) / limit) - 1;
-		int size = limit;
-		return PageRequest.of(page, size);
+		
+		if (offset!= null && searchAfter != null) {
+			throw new IllegalArgumentException("Offset cannot be used in combination with 'searchAfter'");
+		}
+		
+		//If neither are specified, we'll use "searchAfter" by default
+		if (offset == null) {
+			return SearchAfterPageRequest.of(searchAfter, limit);
+		} else {
+			int page = ((offset + limit) / limit) - 1;
+			int size = limit;
+			return PageRequest.of(page, size);
+		}
 	}
 
 	public static List<String> getLanguageCodes(String acceptLanguageHeader) {

@@ -15,6 +15,7 @@ import org.snomed.snowstorm.core.util.PageCollectionUtil;
 import org.snomed.snowstorm.core.util.TimerUtil;
 import org.snomed.snowstorm.ecl.ECLQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -60,7 +61,7 @@ public class QueryService {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-	public Page<ConceptMini> search(ConceptQueryBuilder conceptQuery, String branchPath, PageRequest pageRequest) {
+	public Page<ConceptMini> search(ConceptQueryBuilder conceptQuery, String branchPath, AbstractPageRequest pageRequest) {
 		BranchCriteria branchCriteria = versionControlHelper.getBranchCriteria(branchPath);
 		Optional<Page<Long>> conceptIdPageOptional = doSearchForIds(conceptQuery, branchPath, branchCriteria, pageRequest);
 
@@ -90,7 +91,7 @@ public class QueryService {
 		});
 	}
 
-	private Optional<Page<Long>> doSearchForIds(ConceptQueryBuilder conceptQuery, String branchPath, BranchCriteria branchCriteria, PageRequest pageRequest) {
+	private Optional<Page<Long>> doSearchForIds(ConceptQueryBuilder conceptQuery, String branchPath, BranchCriteria branchCriteria, AbstractPageRequest pageRequest) {
 
 		// Validate Lexical criteria
 		String term = conceptQuery.getTermPrefix();
@@ -227,7 +228,7 @@ public class QueryService {
 		return filteredConceptIds;
 	}
 
-	private Page<Long> getSimpleLogicalSearchPage(ConceptQueryBuilder conceptQuery, BranchCriteria branchCriteria, PageRequest pageRequest) {
+	private Page<Long> getSimpleLogicalSearchPage(ConceptQueryBuilder conceptQuery, BranchCriteria branchCriteria, AbstractPageRequest pageRequest) {
 		Page<Long> conceptIdPage;
 		NativeSearchQueryBuilder logicalSearchQuery = new NativeSearchQueryBuilder()
 				.withQuery(boolQuery()
@@ -255,7 +256,7 @@ public class QueryService {
 		return allLexicalMatchesWithOrdering.stream().distinct().collect(Collectors.toList());
 	}
 
-	private Page<Long> doEclSearchAndDefinitionFilter(ConceptQueryBuilder conceptQuery, String branchPath, PageRequest pageRequest, BranchCriteria branchCriteria) {
+	private Page<Long> doEclSearchAndDefinitionFilter(ConceptQueryBuilder conceptQuery, String branchPath, AbstractPageRequest pageRequest, BranchCriteria branchCriteria) {
 		String ecl = conceptQuery.getEcl();
 		logger.info("ECL Search {}", ecl);
 
@@ -275,7 +276,7 @@ public class QueryService {
 		return eclQueryService.selectConceptIds(ecl, branchCriteria, branchPath, conceptQuery.isStated(), conceptIdFilter).getContent();
 	}
 
-	private NativeSearchQuery getLexicalQuery(String term, Collection<String> languageCodes, BranchCriteria branchCriteria, PageRequest pageable) {
+	private NativeSearchQuery getLexicalQuery(String term, Collection<String> languageCodes, BranchCriteria branchCriteria, AbstractPageRequest pageable) {
 		BoolQueryBuilder lexicalQuery = boolQuery()
 				.must(branchCriteria.getEntityBranchCriteria(Description.class))
 				.must(termQuery("active", true));

@@ -8,6 +8,7 @@ import org.snomed.snowstorm.core.data.domain.QueryConcept;
 import org.snomed.snowstorm.core.data.services.QueryService;
 import org.snomed.snowstorm.ecl.domain.expressionconstraint.SExpressionConstraint;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class ECLQueryService {
 	@Autowired
 	private QueryService queryService;
 
-	public Page<Long> selectConceptIds(String ecl, BranchCriteria branchCriteria, String path, boolean stated, PageRequest pageRequest) throws ECLException {
+	public Page<Long> selectConceptIds(String ecl, BranchCriteria branchCriteria, String path, boolean stated, AbstractPageRequest pageRequest) throws ECLException {
 		return selectConceptIds(ecl, branchCriteria, path, stated, null, pageRequest);
 	}
 
@@ -32,7 +33,7 @@ public class ECLQueryService {
 		return selectConceptIds(ecl, branchCriteria, path, stated, conceptIdFilter, null);
 	}
 
-	public Page<Long> selectConceptIds(String ecl, BranchCriteria branchCriteria, String path, boolean stated, Collection<Long> conceptIdFilter, PageRequest pageRequest) throws ECLException {
+	public Page<Long> selectConceptIds(String ecl, BranchCriteria branchCriteria, String path, boolean stated, Collection<Long> conceptIdFilter, AbstractPageRequest pageRequest) throws ECLException {
 		SExpressionConstraint expressionConstraint = (SExpressionConstraint) queryBuilder.createQuery(ecl);
 
 		// TODO: Attempt to simplify queries here.

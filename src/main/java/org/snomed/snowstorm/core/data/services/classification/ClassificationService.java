@@ -34,6 +34,7 @@ import org.snomed.snowstorm.core.rf2.export.ExportService;
 import org.snomed.snowstorm.core.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -377,12 +378,12 @@ public class ClassificationService {
 		}
 	}
 
-	public Page<RelationshipChange> getRelationshipChanges(String path, String classificationId, List<String> languageCodes, PageRequest pageRequest) {
+	public Page<RelationshipChange> getRelationshipChanges(String path, String classificationId, List<String> languageCodes, AbstractPageRequest pageRequest) {
 		checkClassificationHasResults(path, classificationId);
 		return doGetRelationshipChanges(path, classificationId, languageCodes, pageRequest, true, null);
 	}
 
-	private Page<RelationshipChange> doGetRelationshipChanges(String path, String classificationId, List<String> languageCodes, PageRequest pageRequest, boolean fetchDescriptions, String sourceIdFilter) {
+	private Page<RelationshipChange> doGetRelationshipChanges(String path, String classificationId, List<String> languageCodes, AbstractPageRequest pageRequest, boolean fetchDescriptions, String sourceIdFilter) {
 
 		Page<RelationshipChange> relationshipChanges =
 				sourceIdFilter != null ?
@@ -404,7 +405,7 @@ public class ClassificationService {
 		return relationshipChanges;
 	}
 
-	public Page<EquivalentConceptsResponse> getEquivalentConcepts(String path, String classificationId, List<String> languageCodes, PageRequest pageRequest) {
+	public Page<EquivalentConceptsResponse> getEquivalentConcepts(String path, String classificationId, List<String> languageCodes, AbstractPageRequest pageRequest) {
 		checkClassificationHasResults(path, classificationId);
 		return doGetEquivalentConcepts(path, classificationId, languageCodes, pageRequest);
 	}
@@ -419,7 +420,7 @@ public class ClassificationService {
 		return concept;
 	}
 
-	private Page<EquivalentConceptsResponse> doGetEquivalentConcepts(String path, String classificationId, List<String> languageCodes, PageRequest pageRequest) {
+	private Page<EquivalentConceptsResponse> doGetEquivalentConcepts(String path, String classificationId, List<String> languageCodes, AbstractPageRequest pageRequest) {
 		Page<EquivalentConcepts> relationshipChanges = equivalentConceptsRepository.findByClassificationId(classificationId, pageRequest);
 		if (relationshipChanges.getTotalElements() == 0) {
 			return new PageImpl<>(Collections.emptyList());

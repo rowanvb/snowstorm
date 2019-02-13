@@ -21,6 +21,7 @@ import org.snomed.snowstorm.core.data.repositories.ReferenceSetMemberRepository;
 import org.snomed.snowstorm.core.data.repositories.ReferenceSetTypeRepository;
 import org.snomed.snowstorm.core.data.services.identifier.IdentifierService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -73,7 +74,7 @@ public class ReferenceSetMemberService extends ComponentService {
 			String referencedComponentId,
 			String targetComponentId,
 			String mapTarget,
-			PageRequest pageRequest) {
+			AbstractPageRequest pageRequest) {
 
 		BranchCriteria branchCriteria = versionControlHelper.getBranchCriteria(branch);
 

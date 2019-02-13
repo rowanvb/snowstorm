@@ -21,6 +21,7 @@ import org.snomed.snowstorm.core.data.services.pojo.PageWithBucketAggregationsFa
 import org.snomed.snowstorm.core.data.services.pojo.SimpleAggregation;
 import org.snomed.snowstorm.core.util.TimerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -62,7 +63,7 @@ public class DescriptionService extends ComponentService {
 		return null;
 	}
 
-	public Page<Description> findDescriptions(String branch, String exactTerm, String concept, PageRequest pageRequest) {
+	public Page<Description> findDescriptions(String branch, String exactTerm, String concept, AbstractPageRequest pageRequest) {
 		BranchCriteria branchCriteria = versionControlHelper.getBranchCriteria(branch);
 		BoolQueryBuilder query = boolQuery().must(branchCriteria.getEntityBranchCriteria(Description.class));
 		if (concept != null && !concept.isEmpty()) {
@@ -98,7 +99,7 @@ public class DescriptionService extends ComponentService {
 
 	public PageWithBucketAggregations<Description> findDescriptionsWithAggregations(String path, String term,
 			Boolean conceptActive, String semanticTag,
-			Collection<String> languageCodes, PageRequest pageRequest) {
+			Collection<String> languageCodes, AbstractPageRequest pageRequest) {
 
 		TimerUtil timer = new TimerUtil("Search", Level.DEBUG);
 		final BranchCriteria branchCriteria = versionControlHelper.getBranchCriteria(path);
