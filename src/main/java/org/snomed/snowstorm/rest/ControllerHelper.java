@@ -6,6 +6,7 @@ import org.snomed.snowstorm.core.data.services.NotFoundException;
 import org.snomed.snowstorm.rest.pojo.ConceptMiniNestedFsn;
 import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.SearchAfterPageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -53,24 +54,22 @@ public class ControllerHelper {
 		}
 		return component;
 	}
-
-	public static AbstractPageRequest getPageRequest(@RequestParam(required = false) Integer offset, @RequestParam(required = false, defaultValue = "50") int limit, @RequestParam(required = false) String searchAfter) {
+	
+	public static AbstractPageRequest getPageRequest(@RequestParam(required = false) Integer offset, @RequestParam(required = false, defaultValue = "50") int limit) {
 		if (offset!= null && offset % limit != 0) {
 			throw new IllegalArgumentException("Offset must be a multiplication of the limit param in order to map to Spring pages.");
 		}
 		
-		if (offset!= null && searchAfter != null) {
-			throw new IllegalArgumentException("Offset cannot be used in combination with 'searchAfter'");
+		int page = ((offset + limit) / limit) - 1;
+		int size = limit;
+		return PageRequest.of(page, size);
+	}
+
+	public static AbstractPageRequest getPageRequest(@RequestParam(required = false, defaultValue = "50") int limit, @RequestParam(required = false) String searchAfter, String[] sortValues) {
+		if (sortValues == null || sortValues.length == 0) {
+			throw new IllegalArgumentException("SearchAfter page request must specify a sort order");
 		}
-		
-		//If neither are specified, we'll use "searchAfter" by default
-		if (offset == null) {
-			return SearchAfterPageRequest.of(searchAfter, limit);
-		} else {
-			int page = ((offset + limit) / limit) - 1;
-			int size = limit;
-			return PageRequest.of(page, size);
-		}
+		return SearchAfterPageRequest.of(searchAfter, limit, Sort.by(sortValues));
 	}
 
 	public static List<String> getLanguageCodes(String acceptLanguageHeader) {

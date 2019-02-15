@@ -57,9 +57,8 @@ public class ClassificationController {
 			limit = maxLimit;
 			offset = 0;
 		}
-		//TODO Add support for searchAfter
 		return new ItemsPage<>(classificationService.getRelationshipChanges(BranchPathUriUtil.decodePath(branch), classificationId,
-				ControllerHelper.getLanguageCodes(acceptLanguageHeader), ControllerHelper.getPageRequest(offset, limit, null)));
+				ControllerHelper.getLanguageCodes(acceptLanguageHeader), ControllerHelper.getPageRequest(offset, limit)));
 	}
 
 	@ApiOperation("Retrieve a preview of a concept with classification changes applied")
@@ -84,9 +83,8 @@ public class ClassificationController {
 			@RequestParam(required = false, defaultValue = "0") int offset,
 			@RequestParam(required = false, defaultValue = "1000") int limit,
 			@RequestHeader(value = "Accept-Language", defaultValue = ControllerHelper.DEFAULT_ACCEPT_LANG_HEADER) String acceptLanguageHeader) {
-		//TODO Add support for searchAfter
 		return new ItemsPage<>(classificationService.getEquivalentConcepts(BranchPathUriUtil.decodePath(branch), classificationId,
-				ControllerHelper.getLanguageCodes(acceptLanguageHeader), ControllerHelper.getPageRequest(offset, limit, null)));
+				ControllerHelper.getLanguageCodes(acceptLanguageHeader), ControllerHelper.getPageRequest(offset, limit)));
 	}
 
 	@ApiOperation("Create a classification on a branch")

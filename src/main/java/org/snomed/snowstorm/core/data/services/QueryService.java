@@ -68,6 +68,7 @@ public class QueryService {
 		if (conceptIdPageOptional.isPresent()) {
 			Page<Long> conceptIdPage = conceptIdPageOptional.get();
 			ResultMapPage<String, ConceptMini> conceptMinis = conceptService.findConceptMinis(branchCriteria, conceptIdPage.getContent(), conceptQuery.getLanguageCodes());
+			//TODO If we're sorting the underlying query by conceptId, is it worth sorting the page by term?
 			return new PageImpl<>(sortConceptMinisByTermOrder(conceptIdPage.getContent(), conceptMinis.getResultsMap()), pageRequest, conceptIdPage.getTotalElements());
 		} else {
 			// No ids - return page of all concepts

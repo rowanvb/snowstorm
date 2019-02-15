@@ -10,6 +10,7 @@ import org.snomed.otf.owltoolkit.conversion.ConversionException;
 import org.snomed.snowstorm.core.data.domain.Concept;
 import org.snomed.snowstorm.core.data.domain.ConceptMini;
 import org.snomed.snowstorm.core.data.domain.ConceptView;
+import org.snomed.snowstorm.core.data.domain.QueryConcept;
 import org.snomed.snowstorm.core.data.domain.Relationship;
 import org.snomed.snowstorm.core.data.domain.expression.Expression;
 import org.snomed.snowstorm.core.data.services.*;
@@ -17,6 +18,7 @@ import org.snomed.snowstorm.core.data.services.pojo.AsyncConceptChangeBatch;
 import org.snomed.snowstorm.core.data.services.pojo.ResultMapPage;
 import org.snomed.snowstorm.rest.pojo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +54,8 @@ public class ConceptController {
 
 	@Autowired
 	private VersionControlHelper versionControlHelper;
+	
+	static final String[] DEFAULT_SORT = new String[] {QueryConcept.Fields.CONCEPT_ID};
 
 	@RequestMapping(value = "/{branch}/concepts", method = RequestMethod.GET, produces = {"application/json", "text/csv"})
 	@ResponseBody
@@ -84,8 +88,17 @@ public class ConceptController {
 				.conceptIds(conceptIds);
 
 		validatePageSize(limit);
-
-		return new ItemsPage<>(queryService.search(queryBuilder, BranchPathUriUtil.decodePath(branch), ControllerHelper.getPageRequest(offset, limit, searchAfter)));
+		
+		//Are we working with an offset, or a searchAfter request?
+		AbstractPageRequest pageRequest;
+		if (offset == null) {
+			pageRequest = ControllerHelper.getPageRequest(limit, searchAfter, DEFAULT_SORT);
+		} else {
+			pageRequest = ControllerHelper.getPageRequest(offset, limit);
+		}
+		
+		Page<ConceptMini> page = queryService.search(queryBuilder, BranchPathUriUtil.decodePath(branch), pageRequest);
+		return new ItemsPage<>(page);
 	}
 
 	@RequestMapping(value = "/{branch}/concepts/{conceptId}", method = RequestMethod.GET, produces = {"application/json", "text/csv"})

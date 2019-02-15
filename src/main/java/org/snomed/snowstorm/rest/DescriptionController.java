@@ -42,9 +42,8 @@ public class DescriptionController {
 			@RequestParam(defaultValue = "0") int offset,
 			@RequestParam(defaultValue = "50") int limit,
 			@RequestHeader(value = "Accept-Language", defaultValue = ControllerHelper.DEFAULT_ACCEPT_LANG_HEADER) String acceptLanguageHeader) {
-		//TODO Add support for searchAfter
 		branch = BranchPathUriUtil.decodePath(branch);
-		AbstractPageRequest pageRequest = ControllerHelper.getPageRequest(offset, limit, null);
+		AbstractPageRequest pageRequest = ControllerHelper.getPageRequest(offset, limit);
 
 		List<String> languageCodes = ControllerHelper.getLanguageCodes(acceptLanguageHeader);
 
@@ -88,9 +87,8 @@ public class DescriptionController {
 			@RequestParam(required = false) @ApiParam("The concept id to match") String concept,
 			@RequestParam(defaultValue = "0") int offset, @RequestParam(defaultValue = "50") int limit,
 			@RequestHeader("Accept-Language") String acceptLanguage) {
-		//TODO Add support for searchAfter
 		branch = BranchPathUriUtil.decodePath(branch);
-		return new ItemsPage<>(descriptionService.findDescriptions(branch, null, concept, ControllerHelper.getPageRequest(offset, limit, null)));
+		return new ItemsPage<>(descriptionService.findDescriptions(branch, null, concept, ControllerHelper.getPageRequest(offset, limit)));
 	}
 
 	@RequestMapping(value = "{branch}/descriptions/{descriptionId}", method = RequestMethod.GET)

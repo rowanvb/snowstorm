@@ -54,7 +54,6 @@ public class RelationshipController {
 			@RequestParam(defaultValue = "0") int offset,
 			@RequestParam(defaultValue = "50") int limit,
 			@RequestHeader(value = "Accept-Language", defaultValue = ControllerHelper.DEFAULT_ACCEPT_LANG_HEADER) String acceptLanguageHeader) {
-		//TODO Add support for searchAfter
 		branch = BranchPathUriUtil.decodePath(branch);
 		List<String> languageCodes = ControllerHelper.getLanguageCodes(acceptLanguageHeader);
 		Page<Relationship> relationshipPage = relationshipService.findRelationships(
@@ -68,7 +67,7 @@ public class RelationshipController {
 				destination,
 				characteristicType != null ? characteristicType.getCharacteristicType() : null,
 				group,
-				ControllerHelper.getPageRequest(offset, limit, null));
+				ControllerHelper.getPageRequest(offset, limit));
 
 		expandSourceTypeAndDestination(branch, relationshipPage.getContent(), languageCodes);
 
