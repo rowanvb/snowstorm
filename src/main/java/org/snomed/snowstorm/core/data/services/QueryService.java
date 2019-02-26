@@ -196,7 +196,7 @@ public class QueryService {
 			logger.info("{} lexical results, {} logical results", allLexicalMatchesWithOrdering.size(), allFilteredLogicalMatchesFinal.size());
 
 			// Create page of ids which is an intersection of the lexical and logical lists using the lexical ordering
-			conceptIdPage = PageCollectionUtil.listIntersection(allLexicalMatchesWithOrdering, allFilteredLogicalMatchesFinal, pageRequest);
+			conceptIdPage = PageCollectionUtil.listIntersection(allLexicalMatchesWithOrdering, allFilteredLogicalMatchesFinal, pageRequest, Long.class);
 		}
 
 		if (conceptIdPage != null) {
@@ -265,7 +265,7 @@ public class QueryService {
 		if (definitionStatusFilter != null && !definitionStatusFilter.isEmpty()) {
 			Page<Long> allConceptIds = eclQueryService.selectConceptIds(ecl, branchCriteria, branchPath, conceptQuery.isStated(), null, null);
 			List<Long> filteredConceptIds = filterByDefinitionStatus(allConceptIds.getContent(), conceptQuery.definitionStatusFilter, branchCriteria);
-			return PageCollectionUtil.listToPage(filteredConceptIds, pageRequest);
+			return PageCollectionUtil.listToPage(filteredConceptIds, pageRequest, Long.class);
 		} else {
 			return eclQueryService.selectConceptIds(ecl, branchCriteria, branchPath, conceptQuery.isStated(), pageRequest);
 		}

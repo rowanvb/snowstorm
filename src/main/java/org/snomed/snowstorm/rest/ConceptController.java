@@ -10,6 +10,7 @@ import org.snomed.otf.owltoolkit.conversion.ConversionException;
 import org.snomed.snowstorm.core.data.domain.Concept;
 import org.snomed.snowstorm.core.data.domain.ConceptMini;
 import org.snomed.snowstorm.core.data.domain.ConceptView;
+import org.snomed.snowstorm.core.data.domain.Description;
 import org.snomed.snowstorm.core.data.domain.QueryConcept;
 import org.snomed.snowstorm.core.data.domain.Relationship;
 import org.snomed.snowstorm.core.data.domain.expression.Expression;
@@ -55,7 +56,8 @@ public class ConceptController {
 	@Autowired
 	private VersionControlHelper versionControlHelper;
 	
-	static final String[] DEFAULT_SORT = new String[] {QueryConcept.Fields.CONCEPT_ID};
+	static final String[] DEFAULT_CONCEPT_SORT = new String[] {QueryConcept.Fields.CONCEPT_ID};
+	static final String[] DEFAULT_DESC_SORT = new String[] {Description.Fields.DESCRIPTION_ID};
 
 	@RequestMapping(value = "/{branch}/concepts", method = RequestMethod.GET, produces = {"application/json", "text/csv"})
 	@ResponseBody
@@ -78,6 +80,15 @@ public class ConceptController {
 		} else {
 			ecl = statedEcl;
 		}
+		
+		String[] sorting;
+		if (term != null) {
+			sorting = DEFAULT_DESC_SORT;
+		} else if (ecl != null) {
+			sorting = DEFAULT_CONCEPT_SORT;
+		} else {
+			throw new IllegalArgumentException("TODO - What sort to apply here?");
+		}
 
 		QueryService.ConceptQueryBuilder queryBuilder = queryService.createQueryBuilder(stated)
 				.activeFilter(activeFilter)
@@ -92,7 +103,7 @@ public class ConceptController {
 		//Are we working with an offset, or a searchAfter request?
 		AbstractPageRequest pageRequest;
 		if (offset == null) {
-			pageRequest = ControllerHelper.getPageRequest(limit, searchAfter, DEFAULT_SORT);
+			pageRequest = ControllerHelper.getPageRequest(limit, searchAfter, sorting);
 		} else {
 			pageRequest = ControllerHelper.getPageRequest(offset, limit);
 		}
