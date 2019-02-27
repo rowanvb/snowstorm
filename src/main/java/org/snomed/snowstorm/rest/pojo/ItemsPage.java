@@ -40,7 +40,7 @@ public class ItemsPage<T> {
 			this.searchAfterToken = sapr.getSearchAfterToken();
 			this.offset = null;
 		} else {
-			this.offset = new Long(page.getNumber() * page.getSize());
+			this.offset = page.getNumber() * (long)page.getSize();
 			this.searchAfterToken = null;
 		}
 		

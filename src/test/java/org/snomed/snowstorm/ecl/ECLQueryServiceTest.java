@@ -186,7 +186,6 @@ public class ECLQueryServiceTest extends AbstractTest {
 				new NativeSearchQueryBuilder()
 						.withSort(SortBuilders.fieldSort(QueryConcept.Fields.CONCEPT_ID))
 						.withPageable(LARGE_PAGE).build(), QueryConcept.class);
-		System.out.println(queryConcepts);
 	}
 
 	@Test
@@ -516,6 +515,13 @@ public class ECLQueryServiceTest extends AbstractTest {
 		assertEquals(
 				Sets.newHashSet(RIGHT),
 				strings(selectConceptIds("<" + CLINICAL_FINDING + "." + FINDING_SITE + "." + LATERALITY)));
+	}
+
+	@Test
+	public void conjunctionWithReverseFlag() {
+		assertEquals(
+				Sets.newHashSet(RIGHT_VENTRICULAR_STRUCTURE, PULMONARY_VALVE_STRUCTURE),
+				strings(selectConceptIds("<" + BODY_STRUCTURE + " AND (<" + DISORDER + "." + FINDING_SITE + ")")));
 	}
 
 	// TODO: Add reverse flag with cardinality
