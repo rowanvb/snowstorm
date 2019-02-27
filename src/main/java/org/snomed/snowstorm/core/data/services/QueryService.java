@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchAfterHelper;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.util.CloseableIterator;
@@ -127,7 +128,8 @@ public class QueryService {
 			if (conceptIds != null && !conceptIds.isEmpty()) {
 				// Concept ID pass-through
 				List<Long> conceptIdList = conceptIds.stream().map(Long::parseLong).collect(Collectors.toList());
-				List<Long> pageOfIds = PageCollectionUtil.subList(conceptIdList, pageRequest.getPageNumber(), pageRequest.getPageSize());
+				List<Long> pageOfIds = PageCollectionUtil.subList(conceptIdList, pageRequest, Long.class);
+				SearchAfterHelper.populateSearchAfterToken(pageOfIds, pageRequest, Long.class);
 				conceptIdPage = new PageImpl<>(pageOfIds, pageRequest, conceptIdList.size());
 			} else if (conceptQuery.getEcl() != null) {
 				// ECL search

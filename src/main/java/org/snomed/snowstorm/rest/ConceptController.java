@@ -81,13 +81,13 @@ public class ConceptController {
 			ecl = statedEcl;
 		}
 		
-		String[] sorting;
+		String[] sorting = null;
 		if (term != null) {
 			sorting = DEFAULT_DESC_SORT;
 		} else if (ecl != null) {
 			sorting = DEFAULT_CONCEPT_SORT;
-		} else {
-			throw new IllegalArgumentException("TODO - What sort to apply here?");
+		} else if (offset == null){
+			sorting = DEFAULT_CONCEPT_SORT;
 		}
 
 		QueryService.ConceptQueryBuilder queryBuilder = queryService.createQueryBuilder(stated)

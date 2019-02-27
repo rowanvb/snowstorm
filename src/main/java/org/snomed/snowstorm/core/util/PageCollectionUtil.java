@@ -20,34 +20,31 @@ public class PageCollectionUtil {
 		return listToPage(fullResultList, pageable, typeClass);
 	}
 
-	public static <T> Page<T> listToPage(List<T> fullResultList, Pageable pageable, Class<T> typeClass) {
-		List<T> pageOfResults;
+	public static <T> Page<T> listToPage(List<T> wholeList, Pageable pageable, Class<T> typeClass) {
+		
+		List<T> pageOfResults = subList(wholeList, pageable, typeClass);
+		SearchAfterHelper.populateSearchAfterToken(wholeList, pageable, typeClass);
+		return new PageImpl<T>(pageOfResults, pageable, wholeList.size());
+	}
+	
+	public static <T> List<T> subList(List<T> wholeList, Pageable pageable, Class<T> typeClass) {
 		int pageNumber = 0;
 		//Are we working with page numbers, or a searchAfter parameter?
 		if (pageable instanceof SearchAfterPageRequest) {
-			pageNumber = calculatePageNumber(fullResultList, (SearchAfterPageRequest)pageable, typeClass);
+			pageNumber = calculatePageNumber(wholeList, (SearchAfterPageRequest)pageable, typeClass);
 		} else {
 			pageNumber = pageable.getPageNumber();
 		}
 		
 		//Did we find the page we were looking for?  Return empty results if not
 		if (pageNumber == -1) {
-			return new PageImpl<T>(new ArrayList<>(), pageable, 0);
+			return new ArrayList<>();
 		}
-		
-		pageOfResults = subList(fullResultList, pageNumber, pageable.getPageSize());
-		
-		if (pageable instanceof SearchAfterPageRequest) {
-			//Set our searchAfter token, as long as we've more results to show
-			T lastItem = pageOfResults.get(pageOfResults.size()-1);
-			String searchAfterToken = SearchAfterHelper.calculateSearchAfterToken(((SearchAfterPageRequest)pageable), lastItem, typeClass);
-			((SearchAfterPageRequest)pageable).setSearchAfterToken(searchAfterToken);
-		}
-		
-		return new PageImpl<T>(pageOfResults, pageable, fullResultList.size());
+		return subList(wholeList, pageNumber, pageable.getPageSize());
 	}
 
-	public static <T> List<T> subList(List<T> wholeList, int pageNumber, int pageSize) {
+
+	private static <T> List<T> subList(List<T> wholeList, int pageNumber, int pageSize) {
 		int offset = pageNumber * pageSize;
 		int limit = (pageNumber + 1) * pageSize;
 
@@ -93,6 +90,10 @@ public class PageCollectionUtil {
 			}
 			
 			if (searchAfterCriteriaMet) {
+				//However, if we've actually hit the last item, then we're out of data
+				if (item.equals(wholeList.get(wholeList.size() - 1))) {
+					currentPage = -1;
+				}
 				break;
 			}
 		}
