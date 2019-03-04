@@ -21,9 +21,8 @@ public class PageCollectionUtil {
 	}
 
 	public static <T> Page<T> listToPage(List<T> wholeList, Pageable pageable, Class<T> typeClass) {
-		
 		List<T> pageOfResults = subList(wholeList, pageable, typeClass);
-		SearchAfterHelper.populateSearchAfterToken(wholeList, pageable, typeClass);
+		SearchAfterHelper.populateSearchAfterToken(pageOfResults, pageable, typeClass);
 		return new PageImpl<T>(pageOfResults, pageable, wholeList.size());
 	}
 	

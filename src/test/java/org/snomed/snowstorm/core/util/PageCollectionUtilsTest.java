@@ -26,7 +26,7 @@ public class PageCollectionUtilsTest {
 		testData.add(new Car("BMW", "3-Series"));
 		testData.add(new Car("Vauxhall", "Astra"));
 		testData.add(new Car("Renault", "Laguna"));
-		testData.add(new Car("Voltswagen", "Golf"));
+		testData.add(new Car("Volkswagen", "Golf"));
 		testData.add(new Car("Mazda", "5"));
 		testData.add(new Car("Tesla", "Model-X"));
 		testData.add(new Car("Audi", "A4"));
