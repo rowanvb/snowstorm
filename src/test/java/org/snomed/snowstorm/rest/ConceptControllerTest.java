@@ -99,6 +99,16 @@ public class ConceptControllerTest extends AbstractTest {
 		assertEquals(2, currentConceptVersion.getRelationships().size());
 		assertEquals(3, currentConceptVersion.getDescriptions().size());
 	}
+	
+	@Test
+	public void testNoCriteriaSearch() {
+		String responseBody = this.restTemplate.getForObject("http://localhost:" + port + "/MAIN/concepts?conceptIds", String.class);
+		System.out.println(responseBody);
+
+		// Assert that quotes are escaped
+		assertThat(responseBody).contains("\"total\":1");
+	
+	}
 
 	@Test
 	public void testQuotesEscapedAllConceptEndpoints() {
@@ -122,8 +132,8 @@ public class ConceptControllerTest extends AbstractTest {
 
 		// Simple Concept ECL
 		HashMap<String, Object> urlVariables = new HashMap<>();
-		urlVariables.put("ecl", "257751006");
-		responseBody = this.restTemplate.getForObject("http://localhost:" + port + "/MAIN/concepts", String.class, urlVariables);
+		urlVariables.put("conceptIds", "257751006");
+		responseBody = this.restTemplate.getForObject("http://localhost:" + port + "/MAIN/concepts?conceptIds={conceptIds}", String.class, urlVariables);
 		System.out.println(responseBody);
 
 		// Assert that quotes are escaped

@@ -108,9 +108,27 @@ public class QueryService {
 			hasLexicalCriteria = false;
 		}
 		boolean hasLogicalConditions = conceptQuery.hasLogicalConditions();
-
+		Boolean activeFilter = conceptQuery.getActiveFilter();
 		Page<Long> conceptIdPage = null;
-		if (hasLexicalCriteria && !hasLogicalConditions) {
+		
+		if (!hasLexicalCriteria && !hasLogicalConditions) {
+			//A no criteria search - return all concepts - might filter by active and definition status
+			List<Long> allMatches = new LongArrayList();
+			NativeSearchQueryBuilder allConceptQuery = new NativeSearchQueryBuilder()
+					.withFields(Concept.Fields.CONCEPT_ID)
+					.withPageable(LARGE_PAGE);
+			if (activeFilter != null) {
+				allConceptQuery.withQuery(boolQuery()
+						.must(branchCriteria.getEntityBranchCriteria(Concept.class))
+						.must(termQuery(Concept.Fields.ACTIVE, activeFilter.booleanValue()))
+				);
+			}
+			try (CloseableIterator<Concept> stream = elasticsearchTemplate.stream(allConceptQuery.build(), Concept.class)) {
+				stream.forEachRemaining(c -> allMatches.add(c.getConceptIdAsLong()));
+			}
+			List<Long> allFilteredMatches = filterByDefinitionStatus(allMatches, conceptQuery.getDefinitionStatusFilter(), branchCriteria);
+			conceptIdPage = PageCollectionUtil.listToPage(allFilteredMatches, pageRequest, Long.class);
+		} else if (hasLexicalCriteria && !hasLogicalConditions) {
 			// Lexical Only
 			logger.info("Lexical search {}", term);
 			NativeSearchQuery descriptionQuery = getLexicalQuery(term, languageCodes, branchCriteria, pageRequest);
@@ -157,8 +175,6 @@ public class QueryService {
 			} else {
 				logger.info("Primitive Logical Search ");
 				allFilteredLogicalMatches = new LongArrayList();
-
-				Boolean activeFilter = conceptQuery.getActiveFilter();
 				if (activeFilter == null || activeFilter) {
 					// All QueryConcepts are active
 
